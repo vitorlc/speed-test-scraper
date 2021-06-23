@@ -54,7 +54,7 @@ const speedTestSites = [
 ];
 
 const runSpeedScraper = async () => {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-web-security', '--disable-features=site-per-process'] })
+  const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-web-security', '--disable-features=site-per-process'] })
   const page = await browser.newPage()
   await page.setViewport({ width: 1000, height: 1070 })
   const result = []
