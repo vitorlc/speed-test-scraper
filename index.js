@@ -94,8 +94,8 @@ const runSpeedScraper = async () => {
   result.forEach((data) => {
     console.log()
     console.log(chalk.bgBlue.white.bold(`      ${data.name}      `))
-    console.log(chalk.yellow.bold(`Download: ${data.download}`))
-    console.log(chalk.yellow.bold(`Upload  : ${data.upload}`))
+    console.log(chalk.yellow.bold(`Download: ${data.downloadSpeed}`))
+    console.log(chalk.yellow.bold(`Upload  : ${data.uploadSpeed}`))
     console.log(chalk.yellow.bold(`Ping    : ${data.ping}`))
     console.log(chalk.yellow.bold(`Servidor: ${data.server || '-'}`))
   })
