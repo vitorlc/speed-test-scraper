@@ -6,18 +6,15 @@ const speedTestSites = [
     url: 'https://www.minhaconexao.com.br',
     waitUntil: ['networkidle0', 'domcontentloaded'],
     waitFor: () => {
-      return !!document.querySelector('iframe[title="Velocímetro"]').contentWindow.document.querySelector('#result_text_upload') &&
-        !!document.querySelector('iframe[title="Velocímetro"]').contentWindow.document.querySelector('#result_text_upload').innerText.length != 0
+      return !!document.querySelector('table > tbody > tr')
     },
-    getResult: (page) => {
-      return page.evaluate(() => {
-        const frame = document.querySelector('iframe[title="Velocímetro"]').contentWindow.document
-        return {
-          ping: frame.querySelector('#result_text_ping').innerText,
-          downloadSpeed: frame.querySelector('#result_text_download').innerText,
-          uploadSpeed: frame.querySelector('#result_text_upload').innerText
-        }
-      })
+    getResult: async (page) => {
+      return {
+        ping: await page.$eval('table > tbody > tr > td:nth-child(5)', el => parseFloat(el.innerText.replace(",", "."))),
+        downloadSpeed: await page.$eval('table > tbody > tr > td:nth-child(6)', el => parseFloat(el.innerText.replace(",", "."))),
+        uploadSpeed: await page.$eval('table > tbody > tr > td:nth-child(7)', el => parseFloat(el.innerText.replace(",", "."))),
+        server: await page.$eval('table > tbody > tr > td:nth-child(4)', el => el.innerText)
+      }
     }
   },
   {
