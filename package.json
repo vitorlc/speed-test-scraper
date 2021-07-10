@@ -4,11 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf build && pkg .",
+    "postbuild": "cp -R ./node_modules/puppeteer/.local-chromium/win64-884014/chrome-win build/chromium"
   },
-  "bin": {
-    "speed-test-scraper": "index.js"
+  "pkg": {
+    "targets": [
+      "node14-win-x64"
+    ],
+    "assets": "node_modules/figlet/fonts/*",
+    "outputPath": "build"
   },
+  "bin": "index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {

@@ -1,8 +1,14 @@
 #!/usr/bin/env node
-const puppeteer = require("puppeteer");
-const ora = require('ora');
-const chalk = require('chalk');
-const figlet = require('figlet');
+const puppeteer = require('puppeteer')
+const ora = require('ora')
+const chalk = require('chalk')
+const figlet = require('figlet')
+const readline = require('readline')
+
+const isPkg = typeof process.pkg !== 'undefined'
+const chromiumExecutablePath = isPkg
+  ? './chromium/chrome.exe'
+  : puppeteer.executablePath()
 
 const speedTestSites = [
   {
@@ -68,7 +74,15 @@ const runSpeedScraper = async () => {
   const spinner = ora();
   spinner.start(chalk.blue('Iniciando SCRAPER'))
 
-  const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-web-security', '--disable-features=site-per-process'] })
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: chromiumExecutablePath,
+    args: [
+      '--no-sandbox',
+      '--disable-web-security',
+      '--disable-features=site-per-process',
+    ],
+  })
   const page = await browser.newPage()
   await page.setViewport({ width: 1000, height: 1070 })
   spinner.succeed();
@@ -76,7 +90,7 @@ const runSpeedScraper = async () => {
   for (let data of speedTestSites) {
     console.log()
     spinner.start(chalk.blue(`Abrindo ${data.name.replace("https://", "")}`)) 
-    await page.goto(data.url, { waitUntil: data.waitUntil })
+    await page.goto(data.url, { timeout: 0, waitUntil: data.waitUntil })
     spinner.succeed();
     if (data.startButton) await page.click(data.startButton)
     spinner.start(chalk.blue(`${data.name} - Aguardando Testes`)) 
@@ -99,6 +113,11 @@ const runSpeedScraper = async () => {
     console.log(chalk.yellow.bold(`Ping    : ${data.ping}`))
     console.log(chalk.yellow.bold(`Servidor: ${data.server || '-'}`))
   })
+
+  isPkg &&
+    readline
+      .createInterface(process.stdin, process.stdout)
+      .question('\n\nAperte [Enter] para fechar...', () => process.exit())
 }
 
 runSpeedScraper()
