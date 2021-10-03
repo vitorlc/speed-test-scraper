@@ -13,22 +13,6 @@ const chromiumExecutablePath = isPkg
 
 const speedTestSites = [
   {
-    name: 'Minha Conexão',
-    url: 'https://www.minhaconexao.com.br',
-    waitUntil: ['networkidle0', 'domcontentloaded'],
-    waitFor: () => {
-      return !!document.querySelector('table > tbody > tr')
-    },
-    getResult: async (page) => {
-      return {
-        ping: await page.$eval('table > tbody > tr > td:nth-child(5)', el => parseFloat(el.innerText.replace(",", "."))),
-        downloadSpeed: await page.$eval('table > tbody > tr > td:nth-child(6)', el => parseFloat(el.innerText.replace(",", "."))),
-        uploadSpeed: await page.$eval('table > tbody > tr > td:nth-child(7)', el => parseFloat(el.innerText.replace(",", "."))),
-        server: await page.$eval('table > tbody > tr > td:nth-child(4)', el => el.innerText)
-      }
-    }
-  },
-  {
     name: 'Speed Test',
     url: 'https://www.speedtest.net',
     startButton: '.js-start-test',
