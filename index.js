@@ -4,6 +4,7 @@ const ora = require('ora')
 const chalk = require('chalk')
 const figlet = require('figlet')
 const readline = require('readline')
+const Table = require("tty-table");
 
 const isPkg = typeof process.pkg !== 'undefined'
 const chromiumExecutablePath = isPkg
@@ -63,6 +64,56 @@ const speedTestSites = [
   }
 ];
 
+const generateTable = (data) => {
+  const header = [
+    {
+      value: "name",
+      alias: "NAME",
+      align: "center",
+      formatter: function (value) {
+        return this.style(value.toUpperCase(), "green", "bold");
+      },
+    },
+    {
+      value: "downloadSpeed",
+      alias: "DOWNLOAD SPEED",
+      align: "center",
+      formatter: (value) => `${value} MB`
+    },
+    {
+      value: "uploadSpeed",
+      alias: "UPLOAD SPEED",
+      align: "center",
+      formatter: (value) => `${value} MB`
+    },
+    {
+      value: "ping",
+      alias: "PING",
+      align: "center",
+    },
+    {
+      value: "server",
+      alias: "SERVER",
+      align: "center",
+    },
+  ];
+
+  const options = {
+    borderStyle: "solid",
+    borderColor: "blue",
+    headerAlign: "center",
+    align: "left",
+    color: "white",
+    truncate: "...",
+    width: "90%",
+    defaultErrorValue: " - ",
+    defaultValue: " - "
+  };
+
+  const out = Table(header, data, options).render();
+  return out
+}
+
 const runSpeedScraper = async () => {
   console.log(chalk.yellow.bold(figlet.textSync('Speed Test\n         Scraper', { horizontalLayout: 'universal smushing', whitespaceBreak: true })));
   console.log();
@@ -104,15 +155,9 @@ const runSpeedScraper = async () => {
   spinner.stop()
   await browser.close()
 
+  const table = generateTable(result) 
   console.log(chalk.bgBlue.white.bold('\n\n      Resultados:      '))
-  result.forEach((data) => {
-    console.log()
-    console.log(chalk.bgBlue.white.bold(`      ${data.name}      `))
-    console.log(chalk.yellow.bold(`Download: ${data.downloadSpeed}`))
-    console.log(chalk.yellow.bold(`Upload  : ${data.uploadSpeed}`))
-    console.log(chalk.yellow.bold(`Ping    : ${data.ping}`))
-    console.log(chalk.yellow.bold(`Servidor: ${data.server || '-'}`))
-  })
+  console.log(table)
 
   isPkg &&
     readline
